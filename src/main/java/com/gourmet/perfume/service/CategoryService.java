@@ -1,6 +1,7 @@
 package com.gourmet.perfume.service;
 
 import com.gourmet.perfume.dto.input.category.CreateCategoryInput;
+import com.gourmet.perfume.dto.input.category.UpdateCategoryGenderInput;
 import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.exception.CustomException;
@@ -8,6 +9,8 @@ import com.gourmet.perfume.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,6 +47,22 @@ public class CategoryService {
             return CategoryPayload.convert(dbCategory);
         }else{
             throw CustomException.categoryNameIsAlreadyExist(createCategoryInput.getName());
+        }
+    }
+
+    @Transactional
+    public CategoryPayload updateCategoryGender(UpdateCategoryGenderInput updateCategoryGenderInput){
+        String id = updateCategoryGenderInput.getId();
+        Category dbCategory = categoryRepository.findById(id).orElseThrow(()-> CustomException.categoryNotFound(id));
+
+        if(dbCategory.getGender().equals(updateCategoryGenderInput.getGender())){
+            throw CustomException.categoryGenderIsAlreadySameWithInputGender();
+        }else{
+            dbCategory.setGender(updateCategoryGenderInput.getGender());
+            dbCategory.setUpdateDate(LocalDateTime.now());
+            categoryRepository.save(dbCategory);
+
+            return CategoryPayload.convert(dbCategory);
         }
     }
 }
