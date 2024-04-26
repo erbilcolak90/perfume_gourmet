@@ -6,6 +6,9 @@ import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CategoryService {
 
@@ -21,5 +24,11 @@ public class CategoryService {
 
     public CategoryPayload getCategoryByName(String name){
         return CategoryPayload.convert(categoryRepository.findByName(name).orElseThrow(()-> CustomException.categoryNameNotFound(name)));
+    }
+
+    public List<CategoryPayload> getAllCategories(){
+        List<Category> categories = categoryRepository.findAll();
+
+        return categories.stream().map(CategoryPayload::convert).collect(Collectors.toList());
     }
 }

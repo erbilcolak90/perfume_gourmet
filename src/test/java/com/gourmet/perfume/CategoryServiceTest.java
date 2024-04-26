@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +71,17 @@ class CategoryServiceTest {
         when(categoryRepositoryMock.findByName(name)).thenReturn(Optional.empty());
 
         assertThrows(CustomException.class, () -> categoryServiceMock.getCategoryByName(name));
+    }
+
+    @DisplayName("getAllCategories should return list categoryPayload")
+    @Test
+    void testGetAllCategories_success(){
+        List<Category> categories = new ArrayList<>();
+        categories.add(categoryMock);
+
+        when(categoryRepositoryMock.findAll()).thenReturn(categories);
+
+        assertEquals(1,categoryServiceMock.getAllCategories().size());
     }
 
     @AfterEach
