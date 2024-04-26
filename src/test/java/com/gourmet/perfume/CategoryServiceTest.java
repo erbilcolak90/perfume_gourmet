@@ -1,5 +1,7 @@
 package com.gourmet.perfume;
 
+import com.gourmet.perfume.dto.input.category.CreateCategoryInput;
+import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.enums.GenderEnums;
 import com.gourmet.perfume.exception.CustomException;
@@ -82,6 +84,28 @@ class CategoryServiceTest {
         when(categoryRepositoryMock.findAll()).thenReturn(categories);
 
         assertEquals(1,categoryServiceMock.getAllCategories().size());
+    }
+
+    @DisplayName("createCategory should return categoryPayload when given name does not exist in createCategoryInput")
+    @Test
+    void testCreateCategory_success(){
+        CreateCategoryInput createCategoryInput = new CreateCategoryInput("test_category_name",GenderEnums.MALE);
+
+        when(categoryRepositoryMock.findByName(createCategoryInput.getName().toLowerCase())).thenReturn(Optional.empty());
+        when(categoryRepositoryMock.save(any(Category.class))).thenReturn(categoryMock);
+
+        assertEquals("test_category_name",categoryServiceMock.createCategory(createCategoryInput).getName());
+
+    }
+
+    @DisplayName("createCategory should throw custom exception categoryNameIsAlreadyExist when given name is exist in createCategoryInput")
+    @Test
+    void testCreateCategory_categoryNameIsAlreadyExist(){
+        CreateCategoryInput createCategoryInput = new CreateCategoryInput("test_category_name",GenderEnums.MALE);
+
+        when(categoryRepositoryMock.findByName(createCategoryInput.getName().toLowerCase())).thenReturn(Optional.ofNullable(categoryMock));
+
+        assertThrows(CustomException.class, ()-> categoryServiceMock.createCategory(createCategoryInput));
     }
 
     @AfterEach

@@ -1,13 +1,14 @@
 package com.gourmet.perfume.service;
 
-import com.gourmet.perfume.dto.category.CategoryPayload;
+import com.gourmet.perfume.dto.input.category.CreateCategoryInput;
+import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -29,6 +30,20 @@ public class CategoryService {
     public List<CategoryPayload> getAllCategories(){
         List<Category> categories = categoryRepository.findAll();
 
-        return categories.stream().map(CategoryPayload::convert).collect(Collectors.toList());
+        return categories.stream().map(CategoryPayload::convert).toList();
+    }
+
+    @Transactional
+    public CategoryPayload createCategory(CreateCategoryInput createCategoryInput){
+
+        Category dbCategory = categoryRepository.findByName(createCategoryInput.getName().toLowerCase()).orElse(null);
+
+        if(dbCategory == null){
+            dbCategory = new Category("",createCategoryInput.getName().toLowerCase(),createCategoryInput.getGender());
+            categoryRepository.save(dbCategory);
+            return CategoryPayload.convert(dbCategory);
+        }else{
+            throw CustomException.categoryNameIsAlreadyExist(createCategoryInput.getName());
+        }
     }
 }
