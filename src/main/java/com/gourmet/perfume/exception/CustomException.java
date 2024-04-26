@@ -9,4 +9,8 @@ public class CustomException extends RuntimeException{
     public static CustomException categoryNotFound(String id){
         return new CustomException("Given id : "+ id + " not found :");
     }
+
+    public static CustomException categoryNameNotFound(String name) {
+        return new CustomException("Given category name : " + name + " not found");
+    }
 }

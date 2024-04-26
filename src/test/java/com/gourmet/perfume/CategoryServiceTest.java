@@ -31,13 +31,13 @@ class CategoryServiceTest {
     private Category categoryMock;
 
     @BeforeEach
-    void setUp(){
-        categoryMock = new Category("test_category_id","test_category_name", GenderEnums.MALE);
+    void setUp() {
+        categoryMock = new Category("test_category_id", "test_category_name", GenderEnums.MALE);
     }
 
     @DisplayName("getCategoryById should return categoryPayload when given id is exist on db")
     @Test
-    void testGetCategoryById_success(){
+    void testGetCategoryById_success() {
         String id = "test_category_id";
         when(categoryRepositoryMock.findById(id)).thenReturn(Optional.ofNullable(categoryMock));
 
@@ -46,14 +46,32 @@ class CategoryServiceTest {
 
     @DisplayName("getCategoryById should throw custom exception categoryNotFound when given id does not exist on db")
     @Test
-    void testGetCategoryById_categoryNotFound(){
+    void testGetCategoryById_categoryNotFound() {
         String id = "test_category_id";
         when(categoryRepositoryMock.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(CustomException.class, ()-> categoryServiceMock.getCategoryById(id));
+        assertThrows(CustomException.class, () -> categoryServiceMock.getCategoryById(id));
+    }
+
+    @DisplayName("getCategoryByName should return categoryPayload when given name is exist")
+    @Test
+    void testGetCategoryByName_success() {
+        String name = "test_category_name";
+        when(categoryRepositoryMock.findByName(name)).thenReturn(Optional.ofNullable(categoryMock));
+
+        assertNotNull(categoryServiceMock.getCategoryByName(name));
+    }
+
+    @DisplayName("getCategoryByName should throw custom exception categoryNameNotFound when given name does not exist")
+    @Test
+    void testGetCategoryByName_categoryNameNotFound() {
+        String name = "test_category_name";
+        when(categoryRepositoryMock.findByName(name)).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, () -> categoryServiceMock.getCategoryByName(name));
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
     }
 }
