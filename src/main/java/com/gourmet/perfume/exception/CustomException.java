@@ -25,4 +25,8 @@ public class CustomException extends RuntimeException {
     public static CustomException categoryIsAlreadyDeleted(String id) {
         return new CustomException("Category id : "+ id+ " is already deleted");
     }
+
+    public static CustomException perfumeNotFound(String id) {
+        return new CustomException("Given id : " +id + " does not exist");
+    }
 }
