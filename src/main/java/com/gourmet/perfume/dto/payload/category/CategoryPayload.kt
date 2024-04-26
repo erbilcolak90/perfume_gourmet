@@ -1,4 +1,4 @@
-package com.gourmet.perfume.dto.category
+package com.gourmet.perfume.dto.payload.category
 
 import com.gourmet.perfume.entity.Category
 import com.gourmet.perfume.enums.GenderEnums

@@ -13,4 +13,8 @@ public class CustomException extends RuntimeException{
     public static CustomException categoryNameNotFound(String name) {
         return new CustomException("Given category name : " + name + " not found");
     }
+
+    public static CustomException categoryNameIsAlreadyExist(String name) {
+        return new CustomException("Given category name is already exist : " + name.toLowerCase());
+    }
 }
