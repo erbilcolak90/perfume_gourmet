@@ -1,4 +1,4 @@
-package com.gourmet.perfume.repository;
+package com.gourmet.perfume.repository.mongodb;
 
 import com.gourmet.perfume.entity.Category;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -6,5 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface CategoryRepository extends MongoRepository<Category, String> {
+
     Optional<Category> findByName(String name);
 }

@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class Category @JvmOverloads constructor(
 
         @Id
-        var id: String,
+        var id: String?,
         var name: String,
         var gender: GenderEnums
 

@@ -5,7 +5,7 @@ import com.gourmet.perfume.dto.input.category.UpdateCategoryGenderInput;
 import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.exception.CustomException;
-import com.gourmet.perfume.repository.CategoryRepository;
+import com.gourmet.perfume.repository.mongodb.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +41,7 @@ public class CategoryService {
         Category dbCategory = categoryRepository.findByName(createCategoryInput.getName().toLowerCase()).orElse(null);
 
         if (dbCategory == null) {
-            dbCategory = new Category("", createCategoryInput.getName().toLowerCase(), createCategoryInput.getGender());
+            dbCategory = new Category(null, createCategoryInput.getName().toLowerCase(), createCategoryInput.getGender());
             categoryRepository.save(dbCategory);
             return CategoryPayload.convert(dbCategory);
         } else {

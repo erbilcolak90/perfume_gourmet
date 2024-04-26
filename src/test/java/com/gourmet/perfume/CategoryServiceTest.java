@@ -5,7 +5,7 @@ import com.gourmet.perfume.dto.input.category.UpdateCategoryGenderInput;
 import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.enums.GenderEnums;
 import com.gourmet.perfume.exception.CustomException;
-import com.gourmet.perfume.repository.CategoryRepository;
+import com.gourmet.perfume.repository.mongodb.CategoryRepository;
 import com.gourmet.perfume.service.CategoryService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
