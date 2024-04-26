@@ -6,6 +6,8 @@ import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.mongodb.PerfumeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PerfumeService {
 
@@ -15,12 +17,23 @@ public class PerfumeService {
         this.perfumeRepository = perfumeRepository;
     }
 
-    public PerfumePayload getPerfumeById(String id){
-        return PerfumePayload.convert(perfumeRepository.findById(id).orElseThrow(()-> CustomException.perfumeNotFound(id)));
+    public PerfumePayload getPerfumeById(String id) {
+        return PerfumePayload.convert(perfumeRepository.findById(id).orElseThrow(() -> CustomException.perfumeNotFound(id)));
     }
 
-    public PerfumePayload getPerfumeByName(String name){
-        return PerfumePayload.convert(perfumeRepository.findByName(name).orElseThrow(()-> CustomException.perfumeNameNotFound(name)));
+    public PerfumePayload getPerfumeByName(String name) {
+        return PerfumePayload.convert(perfumeRepository.findByName(name).orElseThrow(() -> CustomException.perfumeNameNotFound(name)));
     }
 
+    public List<PerfumePayload> getPerfumesByBrandName(String brandName) {
+        List<Perfume> perfumeList = perfumeRepository.findByBrandName(brandName);
+        
+        List<PerfumePayload> perfumePayloads = perfumeList.stream().map(PerfumePayload::convert).toList();
+
+        if (perfumePayloads.isEmpty()) {
+            throw CustomException.noPerfumeBelongingThisBrand(brandName);
+        }
+
+        return perfumePayloads;
+    }
 }
