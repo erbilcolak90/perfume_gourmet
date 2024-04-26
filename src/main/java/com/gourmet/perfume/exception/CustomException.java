@@ -29,4 +29,8 @@ public class CustomException extends RuntimeException {
     public static CustomException perfumeNotFound(String id) {
         return new CustomException("Given id : " +id + " does not exist");
     }
+
+    public static CustomException perfumeNameNotFound(String name) {
+        return new CustomException("Given name : " + name+ " not found");
+    }
 }
