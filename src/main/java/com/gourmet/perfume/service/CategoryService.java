@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,43 +25,58 @@ public class CategoryService {
         return CategoryPayload.convert(categoryRepository.findById(id).orElseThrow(() -> CustomException.categoryNotFound(id)));
     }
 
-    public CategoryPayload getCategoryByName(String name){
-        return CategoryPayload.convert(categoryRepository.findByName(name).orElseThrow(()-> CustomException.categoryNameNotFound(name)));
+    public CategoryPayload getCategoryByName(String name) {
+        return CategoryPayload.convert(categoryRepository.findByName(name).orElseThrow(() -> CustomException.categoryNameNotFound(name)));
     }
 
-    public List<CategoryPayload> getAllCategories(){
+    public List<CategoryPayload> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream().map(CategoryPayload::convert).toList();
     }
 
     @Transactional
-    public CategoryPayload createCategory(CreateCategoryInput createCategoryInput){
+    public CategoryPayload createCategory(CreateCategoryInput createCategoryInput) {
 
         Category dbCategory = categoryRepository.findByName(createCategoryInput.getName().toLowerCase()).orElse(null);
 
-        if(dbCategory == null){
-            dbCategory = new Category("",createCategoryInput.getName().toLowerCase(),createCategoryInput.getGender());
+        if (dbCategory == null) {
+            dbCategory = new Category("", createCategoryInput.getName().toLowerCase(), createCategoryInput.getGender());
             categoryRepository.save(dbCategory);
             return CategoryPayload.convert(dbCategory);
-        }else{
+        } else {
             throw CustomException.categoryNameIsAlreadyExist(createCategoryInput.getName());
         }
     }
 
     @Transactional
-    public CategoryPayload updateCategoryGender(UpdateCategoryGenderInput updateCategoryGenderInput){
+    public CategoryPayload updateCategoryGender(UpdateCategoryGenderInput updateCategoryGenderInput) {
         String id = updateCategoryGenderInput.getId();
-        Category dbCategory = categoryRepository.findById(id).orElseThrow(()-> CustomException.categoryNotFound(id));
+        Category dbCategory = categoryRepository.findById(id).orElseThrow(() -> CustomException.categoryNotFound(id));
 
-        if(dbCategory.getGender().equals(updateCategoryGenderInput.getGender())){
+        if (dbCategory.getGender().equals(updateCategoryGenderInput.getGender())) {
             throw CustomException.categoryGenderIsAlreadySameWithInputGender();
-        }else{
+        } else {
             dbCategory.setGender(updateCategoryGenderInput.getGender());
             dbCategory.setUpdateDate(LocalDateTime.now());
             categoryRepository.save(dbCategory);
 
             return CategoryPayload.convert(dbCategory);
+        }
+    }
+
+    @Transactional
+    public boolean deleteCategory(String id) {
+        Category dbCategory = categoryRepository.findById(id).orElseThrow(() -> CustomException.categoryNotFound(id));
+
+        if (!dbCategory.isDeleted()) {
+            dbCategory.setDeleted(true);
+            dbCategory.setUpdateDate(LocalDateTime.now());
+            categoryRepository.save(dbCategory);
+
+            return true;
+        } else {
+            throw CustomException.categoryIsAlreadyDeleted(id);
         }
     }
 }

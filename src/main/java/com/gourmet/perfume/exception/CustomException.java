@@ -21,4 +21,8 @@ public class CustomException extends RuntimeException {
     public static CustomException categoryGenderIsAlreadySameWithInputGender() {
         return new CustomException("Category gender is already same with input gender");
     }
+
+    public static CustomException categoryIsAlreadyDeleted(String id) {
+        return new CustomException("Category id : "+ id+ " is already deleted");
+    }
 }
