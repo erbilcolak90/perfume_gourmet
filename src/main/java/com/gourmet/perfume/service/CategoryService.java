@@ -18,4 +18,8 @@ public class CategoryService {
     public CategoryPayload getCategoryById(String id) {
         return CategoryPayload.convert(categoryRepository.findById(id).orElseThrow(() -> CustomException.categoryNotFound(id)));
     }
+
+    public CategoryPayload getCategoryByName(String name){
+        return CategoryPayload.convert(categoryRepository.findByName(name).orElseThrow(()-> CustomException.categoryNameNotFound(name)));
+    }
 }
