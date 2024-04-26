@@ -18,4 +18,9 @@ public class PerfumeService {
     public PerfumePayload getPerfumeById(String id){
         return PerfumePayload.convert(perfumeRepository.findById(id).orElseThrow(()-> CustomException.perfumeNotFound(id)));
     }
+
+    public PerfumePayload getPerfumeByName(String name){
+        return PerfumePayload.convert(perfumeRepository.findByName(name).orElseThrow(()-> CustomException.perfumeNameNotFound(name)));
+    }
+
 }

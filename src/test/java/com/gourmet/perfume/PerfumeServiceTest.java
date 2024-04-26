@@ -63,6 +63,24 @@ class PerfumeServiceTest {
         assertThrows(CustomException.class, ()-> perfumeServiceMock.getPerfumeById(id));
     }
 
+    @DisplayName("getPerfumeByName should return perfumePayload when given name is exist")
+    @Test
+    void testGetPerfumeByName_success(){
+        String name ="test_name";
+        when(perfumeRepositoryMock.findByName(name)).thenReturn(Optional.ofNullable(perfumeMock));
+
+        assertNotNull(perfumeServiceMock.getPerfumeByName(name));
+    }
+
+    @DisplayName("getPerfumeByName should throw custom exception perfumeNameNotFound when given name does not exist")
+    @Test
+    void testGetPerfumeByName_perfumeNameNotFound(){
+        String name ="test_name";
+        when(perfumeRepositoryMock.findByName(name)).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.getPerfumeByName(name));
+    }
+
     @AfterEach
     void tearDown(){
 
