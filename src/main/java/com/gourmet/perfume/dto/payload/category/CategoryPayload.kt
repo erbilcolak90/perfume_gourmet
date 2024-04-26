@@ -4,7 +4,7 @@ import com.gourmet.perfume.entity.Category
 import com.gourmet.perfume.enums.GenderEnums
 
 data class CategoryPayload @JvmOverloads constructor(
-        var id: String,
+        var id: String?,
         var name: String,
         var gender: GenderEnums
 ){
