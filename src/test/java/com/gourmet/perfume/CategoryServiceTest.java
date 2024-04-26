@@ -1,6 +1,7 @@
 package com.gourmet.perfume;
 
 import com.gourmet.perfume.dto.input.category.CreateCategoryInput;
+import com.gourmet.perfume.dto.input.category.UpdateCategoryGenderInput;
 import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.enums.GenderEnums;
@@ -106,6 +107,34 @@ class CategoryServiceTest {
         when(categoryRepositoryMock.findByName(createCategoryInput.getName().toLowerCase())).thenReturn(Optional.ofNullable(categoryMock));
 
         assertThrows(CustomException.class, ()-> categoryServiceMock.createCategory(createCategoryInput));
+    }
+
+    @DisplayName("updateCategoryGender should return categoryPayload when given id is exist and gender is not same at exist category from updateCategoryGenderInput")
+    @Test
+    void testUpdateCategoryGender_success(){
+        UpdateCategoryGenderInput updateCategoryGenderInput = new UpdateCategoryGenderInput("test_category_id", GenderEnums.UNISEX);
+
+        when(categoryRepositoryMock.findById(updateCategoryGenderInput.getId())).thenReturn(Optional.ofNullable(categoryMock));
+
+        assertEquals(GenderEnums.UNISEX,categoryServiceMock.updateCategoryGender(updateCategoryGenderInput).getGender());
+    }
+
+    @DisplayName("updateCategoryGender should throw custom exception categoryNotFound when given id does not exist in updateCategoryGenderInput")
+    @Test
+    void testUpdateCategoryGender_categoryNotFound(){
+        UpdateCategoryGenderInput updateCategoryGenderInput = new UpdateCategoryGenderInput("not exist id", GenderEnums.UNISEX);
+        when(categoryRepositoryMock.findById(updateCategoryGenderInput.getId())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class,()-> categoryServiceMock.updateCategoryGender(updateCategoryGenderInput));
+    }
+
+    @DisplayName("updateCategoryGender should throw custom exception categoryGenderIsAlreadySameWithInputGender when given id is exist and dbCategory gender is same with updateCategoryGenderInput gender")
+    @Test
+    void testUpdateCategoryGender_categoryGenderIsAlreadySameWithInputGender(){
+        UpdateCategoryGenderInput updateCategoryGenderInput = new UpdateCategoryGenderInput("test_category_id", GenderEnums.MALE);
+        when(categoryRepositoryMock.findById(updateCategoryGenderInput.getId())).thenReturn(Optional.ofNullable(categoryMock));
+
+        assertThrows(CustomException.class,()-> categoryServiceMock.updateCategoryGender(updateCategoryGenderInput));
     }
 
     @AfterEach
