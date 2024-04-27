@@ -1,5 +1,6 @@
 package com.gourmet.perfume.service;
 
+import com.gourmet.perfume.dto.input.perfume.GetPerfumesByYearRangeInput;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.exception.CustomException;
@@ -35,5 +36,23 @@ public class PerfumeService {
         }
 
         return perfumePayloads;
+    }
+
+    public List<PerfumePayload> getPerfumesByYearRange(GetPerfumesByYearRangeInput getPerfumesByYearRangeInput){
+        int from = getPerfumesByYearRangeInput.getFrom();
+        int to = getPerfumesByYearRangeInput.getTo();
+
+        if(from > to){
+            int temp = from;
+            from = to;
+            to = temp;
+        }
+        List<Perfume> perfumeListByYearRange = perfumeRepository.getPerfumeByYearRange(from,to);
+
+        if(perfumeListByYearRange.isEmpty()){
+            throw CustomException.perfumeNotFoundBetweenTheseYears(from,to);
+        }
+
+        return perfumeListByYearRange.stream().map(PerfumePayload::convert).toList();
     }
 }

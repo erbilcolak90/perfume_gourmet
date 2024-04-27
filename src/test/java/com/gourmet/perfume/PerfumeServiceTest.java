@@ -1,5 +1,6 @@
 package com.gourmet.perfume;
 
+import com.gourmet.perfume.dto.input.perfume.GetPerfumesByYearRangeInput;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.enums.TypeEnums;
 import com.gourmet.perfume.exception.CustomException;
@@ -103,6 +104,43 @@ class PerfumeServiceTest {
 
         assertThrows(CustomException.class, () -> perfumeServiceMock.getPerfumesByBrandName(brandName));
     }
+
+    @DisplayName("getPerfumesByYearRange should return list perfumePayload with given getPerfumesByYearRangeInput")
+    @Test
+    void testGetPerfumesByYearRange_success(){
+        GetPerfumesByYearRangeInput getPerfumesByYearRangeInput = new GetPerfumesByYearRangeInput(2024,2023);
+        List<Perfume> perfumeList = Arrays.asList(perfumeMock);
+        int from = getPerfumesByYearRangeInput.getFrom();
+        int to = getPerfumesByYearRangeInput.getTo();
+
+        if(from > to){
+            int temp = from;
+            from = to;
+            to = temp;
+        }
+        when(perfumeRepositoryMock.getPerfumeByYearRange(from,to)).thenReturn(perfumeList);
+
+
+        assertEquals(1,perfumeServiceMock.getPerfumesByYearRange(getPerfumesByYearRangeInput).size());
+    }
+
+    @DisplayName("getPerfumesByYearRange should throw custom exception perfumeNotFoundBetweenTheseYears when perfumes not found between given input years")
+    @Test
+    void testGetPerfumesByYearRange_perfumeNotFoundBetweenTheseYears(){
+        GetPerfumesByYearRangeInput getPerfumesByYearRangeInput = new GetPerfumesByYearRangeInput(2024,2023);
+        int from = getPerfumesByYearRangeInput.getFrom();
+        int to = getPerfumesByYearRangeInput.getTo();
+
+        if(from > to){
+            int temp = from;
+            from = to;
+            to = temp;
+        }
+        when(perfumeRepositoryMock.getPerfumeByYearRange(from,to)).thenReturn(Arrays.asList());
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.getPerfumesByYearRange(getPerfumesByYearRangeInput));
+    }
+
     @AfterEach
     void tearDown() {
 

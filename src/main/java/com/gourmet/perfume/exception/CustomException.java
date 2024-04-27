@@ -37,4 +37,8 @@ public class CustomException extends RuntimeException {
     public static CustomException noPerfumeBelongingThisBrand(String brandName) {
         return new CustomException("There is no perfume belonging to this brand : " +brandName);
     }
+
+    public static CustomException perfumeNotFoundBetweenTheseYears(int from, int to) {
+        return new CustomException("There was no perfume found between these years from : " + from + " to : " + to);
+    }
 }
