@@ -1,10 +1,13 @@
 package com.gourmet.perfume.service;
 
+import com.gourmet.perfume.dto.input.perfume.GetAllPerfumesInput;
 import com.gourmet.perfume.dto.input.perfume.GetPerfumesByYearRangeInput;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.mongodb.PerfumeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,5 +57,14 @@ public class PerfumeService {
         }
 
         return perfumeListByYearRange.stream().map(PerfumePayload::convert).toList();
+    }
+
+    public Page<PerfumePayload> getAllPerfumes(GetAllPerfumesInput getAllPerfumesInput){
+        Pageable pageable = getAllPerfumesInput.toPageable();
+
+        Page<Perfume> perfumePage = perfumeRepository.findAll(pageable);
+
+        return perfumePage.map(PerfumePayload::convert);
+
     }
 }

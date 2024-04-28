@@ -1,6 +1,8 @@
 package com.gourmet.perfume;
 
+import com.gourmet.perfume.dto.input.perfume.GetAllPerfumesInput;
 import com.gourmet.perfume.dto.input.perfume.GetPerfumesByYearRangeInput;
+import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.enums.TypeEnums;
 import com.gourmet.perfume.exception.CustomException;
@@ -14,6 +16,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,6 +145,21 @@ class PerfumeServiceTest {
         when(perfumeRepositoryMock.getPerfumeByYearRange(from,to)).thenReturn(Arrays.asList());
 
         assertThrows(CustomException.class, ()-> perfumeServiceMock.getPerfumesByYearRange(getPerfumesByYearRangeInput));
+    }
+
+    @DisplayName("getAllPerfumes should return page perfumePayload with given getAllPerfumesInput")
+    @Test
+    void testGetAllPerfumes_success(){
+        GetAllPerfumesInput getAllPerfumesInput = new GetAllPerfumesInput(1,0,"brandName", Sort.Direction.ASC);
+        Pageable pageable = getAllPerfumesInput.toPageable();
+
+        PageImpl<Perfume> perfumePage = new PageImpl<>(Arrays.asList(perfumeMock));
+
+        when(perfumeRepositoryMock.findAll(pageable)).thenReturn(perfumePage);
+
+        Page<PerfumePayload> result = perfumeServiceMock.getAllPerfumes(getAllPerfumesInput);
+
+        assertEquals(1,result.getSize());
     }
 
     @AfterEach
