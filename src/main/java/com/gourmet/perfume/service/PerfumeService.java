@@ -3,6 +3,7 @@ package com.gourmet.perfume.service;
 import com.gourmet.perfume.dto.input.perfume.AddPerfumeInput;
 import com.gourmet.perfume.dto.input.perfume.GetAllPerfumesInput;
 import com.gourmet.perfume.dto.input.perfume.GetPerfumesByYearRangeInput;
+import com.gourmet.perfume.dto.input.perfume.UpdatePerfumeContentInput;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.exception.CustomException;
@@ -121,6 +122,32 @@ public class PerfumeService {
         Perfume dbPerfume = perfumeRepository.findById(id).orElseThrow(() -> CustomException.perfumeNotFound(id));
 
         dbPerfume.setBrand(newBrand.toLowerCase());
+        dbPerfume.setUpdateDate(LocalDateTime.now());
+
+        perfumeRepository.save(dbPerfume);
+
+        return PerfumePayload.convert(dbPerfume);
+
+    }
+
+    @Transactional
+    public PerfumePayload updatePerfumeYear(String id, int year) {
+        Perfume dbPerfume = perfumeRepository.findById(id).orElseThrow(() -> CustomException.perfumeNotFound(id));
+
+        dbPerfume.setYear(year);
+        dbPerfume.setUpdateDate(LocalDateTime.now());
+
+        perfumeRepository.save(dbPerfume);
+
+        return PerfumePayload.convert(dbPerfume);
+
+    }
+
+    @Transactional
+    public PerfumePayload updatePerfumeContent(UpdatePerfumeContentInput updatePerfumeContentInput) {
+        Perfume dbPerfume = perfumeRepository.findById(updatePerfumeContentInput.getId()).orElseThrow(() -> CustomException.perfumeNotFound(updatePerfumeContentInput.getId()));
+
+        dbPerfume.setContent(updatePerfumeContentInput.getContent());
         dbPerfume.setUpdateDate(LocalDateTime.now());
 
         perfumeRepository.save(dbPerfume);
