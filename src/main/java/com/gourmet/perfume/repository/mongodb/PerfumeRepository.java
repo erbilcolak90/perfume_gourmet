@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface PerfumeRepository extends MongoRepository<Perfume, String> {
     Optional<Perfume> findByName(String name);
 
+    @Query(value = "{'brand' : ?0}")
     List<Perfume> findByBrandName(String brandName);
 
     @Query("{'year' : { $gte: ?0, $lte: ?1 } }")
