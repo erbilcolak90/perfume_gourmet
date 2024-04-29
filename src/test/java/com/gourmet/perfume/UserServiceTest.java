@@ -61,6 +61,26 @@ class UserServiceTest {
         assertThrows(CustomException.class, () -> userServiceMock.getUserById(id));
     }
 
+    @DisplayName("getUserByUsername should return userPayload when given username is exist")
+    @Test
+    void testGetUserByUsername_success() {
+        String username = "test_username";
+
+        when(userRepositoryMock.findByUsername(username)).thenReturn(Optional.ofNullable(userMock));
+
+        assertEquals(username, userServiceMock.getUserByUsername(username).getUsername());
+    }
+
+    @DisplayName("getUserByUsername should throw custom exception usernameNotFound when given username does not exist")
+    @Test
+    void testGetUserByUsername_usernameNotFound() {
+        String username = "test_username";
+
+        when(userRepositoryMock.findByUsername(username.toLowerCase())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, () -> userServiceMock.getUserByUsername(username));
+    }
+
     @AfterEach
     void tearDown() {
 
