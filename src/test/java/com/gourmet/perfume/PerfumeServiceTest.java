@@ -1,9 +1,6 @@
 package com.gourmet.perfume;
 
-import com.gourmet.perfume.dto.input.perfume.AddPerfumeInput;
-import com.gourmet.perfume.dto.input.perfume.GetAllPerfumesInput;
-import com.gourmet.perfume.dto.input.perfume.GetPerfumesByYearRangeInput;
-import com.gourmet.perfume.dto.input.perfume.UpdatePerfumeContentInput;
+import com.gourmet.perfume.dto.input.perfume.*;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.enums.TypeEnums;
@@ -262,8 +259,6 @@ class PerfumeServiceTest {
         assertThrows(CustomException.class, ()-> perfumeServiceMock.updatePerfumeYear(test_id,newYear));
     }
 
-
-
     @DisplayName("updatePerfumeContent should return perfumePayload when given id is exist")
     @Test
     void testUpdatePerfumeContent_success(){
@@ -275,7 +270,7 @@ class PerfumeServiceTest {
         assertEquals(updatePerfumeContentInput.getContent(),perfumeServiceMock.updatePerfumeContent(updatePerfumeContentInput).getContent());
     }
 
-    @DisplayName("updatePerfumeBrand should throw custom exception perfumeNotFound when given id does not exist")
+    @DisplayName("updatePerfumeContent should throw custom exception perfumeNotFound when given id does not exist")
     @Test
     void testUpdatePerfumeContent_perfumeNotFound(){
         UpdatePerfumeContentInput updatePerfumeContentInput = new UpdatePerfumeContentInput("test_id","test_new_content");
@@ -283,6 +278,30 @@ class PerfumeServiceTest {
         when(perfumeRepositoryMock.findById(updatePerfumeContentInput.getId())).thenReturn(Optional.empty());
 
         assertThrows(CustomException.class, ()-> perfumeServiceMock.updatePerfumeContent(updatePerfumeContentInput));
+    }
+
+
+
+
+    @DisplayName("updatePerfumeDescription should return perfumePayload when given id is exist")
+    @Test
+    void testUpdatePerfumeDescription_success(){
+        UpdatePerfumeDescriptionInput updatePerfumeDescriptionInput = new UpdatePerfumeDescriptionInput("test_id","test_new_description");
+
+        when(perfumeRepositoryMock.findById(updatePerfumeDescriptionInput.getId())).thenReturn(Optional.ofNullable(perfumeMock));
+        when(perfumeRepositoryMock.save(perfumeMock)).thenReturn(perfumeMock);
+
+        assertEquals(updatePerfumeDescriptionInput.getDescription(),perfumeServiceMock.updatePerfumeDescription(updatePerfumeDescriptionInput).getDescription());
+    }
+
+    @DisplayName("updatePerfumeDescription should throw custom exception perfumeNotFound when given id does not exist")
+    @Test
+    void testUpdatePerfumeDescription_perfumeNotFound(){
+        UpdatePerfumeDescriptionInput updatePerfumeDescriptionInput = new UpdatePerfumeDescriptionInput("test_id","test_new_description");
+
+        when(perfumeRepositoryMock.findById(updatePerfumeDescriptionInput.getId())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.updatePerfumeDescription(updatePerfumeDescriptionInput));
     }
 
     @AfterEach

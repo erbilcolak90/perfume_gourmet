@@ -1,9 +1,6 @@
 package com.gourmet.perfume.service;
 
-import com.gourmet.perfume.dto.input.perfume.AddPerfumeInput;
-import com.gourmet.perfume.dto.input.perfume.GetAllPerfumesInput;
-import com.gourmet.perfume.dto.input.perfume.GetPerfumesByYearRangeInput;
-import com.gourmet.perfume.dto.input.perfume.UpdatePerfumeContentInput;
+import com.gourmet.perfume.dto.input.perfume.*;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.exception.CustomException;
@@ -14,9 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PerfumeService {
@@ -148,6 +143,19 @@ public class PerfumeService {
         Perfume dbPerfume = perfumeRepository.findById(updatePerfumeContentInput.getId()).orElseThrow(() -> CustomException.perfumeNotFound(updatePerfumeContentInput.getId()));
 
         dbPerfume.setContent(updatePerfumeContentInput.getContent());
+        dbPerfume.setUpdateDate(LocalDateTime.now());
+
+        perfumeRepository.save(dbPerfume);
+
+        return PerfumePayload.convert(dbPerfume);
+
+    }
+
+    @Transactional
+    public PerfumePayload updatePerfumeDescription(UpdatePerfumeDescriptionInput updatePerfumeDescriptionInput) {
+        Perfume dbPerfume = perfumeRepository.findById(updatePerfumeDescriptionInput.getId()).orElseThrow(() -> CustomException.perfumeNotFound(updatePerfumeDescriptionInput.getId()));
+
+        dbPerfume.setDescription(updatePerfumeDescriptionInput.getDescription());
         dbPerfume.setUpdateDate(LocalDateTime.now());
 
         perfumeRepository.save(dbPerfume);
