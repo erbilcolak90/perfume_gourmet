@@ -3,7 +3,6 @@ package com.gourmet.perfume.service;
 import com.gourmet.perfume.dto.input.perfume.*;
 import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
-import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.mongodb.PerfumeRepository;
