@@ -99,20 +99,33 @@ public class PerfumeService {
     }
 
     @Transactional
-    public PerfumePayload updatePerfumeName(String id, String newName){
-        Perfume dbPerfume = perfumeRepository.findById(id).orElseThrow(()-> CustomException.perfumeNotFound(id));
+    public PerfumePayload updatePerfumeName(String id, String newName) {
+        Perfume dbPerfume = perfumeRepository.findById(id).orElseThrow(() -> CustomException.perfumeNotFound(id));
 
         Perfume isExistName = perfumeRepository.findByName(newName.toLowerCase()).orElse(null);
 
-        if(isExistName == null){
+        if (isExistName == null) {
             dbPerfume.setName(newName.toLowerCase());
             dbPerfume.setUpdateDate(LocalDateTime.now());
 
             perfumeRepository.save(dbPerfume);
 
             return PerfumePayload.convert(dbPerfume);
-        }else{
+        } else {
             throw CustomException.perfumeNameIsAlreadyExist(newName);
         }
+    }
+
+    @Transactional
+    public PerfumePayload updatePerfumeBrand(String id, String newBrand) {
+        Perfume dbPerfume = perfumeRepository.findById(id).orElseThrow(() -> CustomException.perfumeNotFound(id));
+
+        dbPerfume.setBrand(newBrand.toLowerCase());
+        dbPerfume.setUpdateDate(LocalDateTime.now());
+
+        perfumeRepository.save(dbPerfume);
+
+        return PerfumePayload.convert(dbPerfume);
+
     }
 }
