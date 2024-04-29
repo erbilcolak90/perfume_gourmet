@@ -55,4 +55,8 @@ public class CustomException extends RuntimeException {
     public static CustomException perfumeCategoryListNotContainsInputCategory(String id) {
         return new CustomException("Perfume category list not contains this category id : " + id);
     }
+
+    public static CustomException userNotFound(String id) {
+        return new CustomException("User with given id : " + id + " not found");
+    }
 }
