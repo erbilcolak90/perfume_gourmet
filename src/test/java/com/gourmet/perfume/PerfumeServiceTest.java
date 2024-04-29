@@ -1,11 +1,14 @@
 package com.gourmet.perfume;
 
 import com.gourmet.perfume.dto.input.perfume.*;
+import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.entity.Perfume;
+import com.gourmet.perfume.enums.GenderEnums;
 import com.gourmet.perfume.enums.TypeEnums;
 import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.mongodb.PerfumeRepository;
+import com.gourmet.perfume.service.CategoryService;
 import com.gourmet.perfume.service.PerfumeService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +39,9 @@ class PerfumeServiceTest {
 
     @Mock
     private PerfumeRepository perfumeRepositoryMock;
+
+    @Mock
+    private CategoryService categoryService;
 
     private Perfume perfumeMock;
 
@@ -302,6 +308,41 @@ class PerfumeServiceTest {
         when(perfumeRepositoryMock.findById(updatePerfumeDescriptionInput.getId())).thenReturn(Optional.empty());
 
         assertThrows(CustomException.class, ()-> perfumeServiceMock.updatePerfumeDescription(updatePerfumeDescriptionInput));
+    }
+
+    @DisplayName("addCategoryToPerfume should return perfumePayload when given id is exist and exist perfume has not category id given category id from AddCategoryPerfumeInput")
+    @Test
+    void testAddCategoryToPerfume_success(){
+        AddCategoryToPerfumeInput addCategoryToPerfumeInput = new AddCategoryToPerfumeInput("test_id","test_category_id");
+        CategoryPayload categoryPayload = new CategoryPayload("test_category_id","test_name", GenderEnums.UNISEX);
+
+        when(perfumeRepositoryMock.findById(addCategoryToPerfumeInput.getId())).thenReturn(Optional.ofNullable(perfumeMock));
+        when(categoryService.getCategoryById(addCategoryToPerfumeInput.getCategoryId())).thenReturn(categoryPayload);
+
+        assertEquals(1,perfumeServiceMock.addCategoryToPerfume(addCategoryToPerfumeInput).getCategoryIds().size());
+    }
+
+    @DisplayName("addCategoryToPerfume should throw custom exception perfumeNotFound when given id does not exist from AddCategoryToPerfumeInput")
+    @Test
+    void testAddCategoryToPerfume_perfumeNotFound(){
+        AddCategoryToPerfumeInput addCategoryToPerfumeInput = new AddCategoryToPerfumeInput("test_id","test_category_id");
+
+        when(perfumeRepositoryMock.findById(addCategoryToPerfumeInput.getId())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.addCategoryToPerfume(addCategoryToPerfumeInput));
+    }
+
+    @DisplayName("addCategoryToPerfume should throw custom exception perfumeAlreadyExistOnCategory when given id does not exist from AddCategoryToPerfumeInput")
+    @Test
+    void testAddCategoryToPerfume_perfumeAlreadyExistOnCategory(){
+        AddCategoryToPerfumeInput addCategoryToPerfumeInput = new AddCategoryToPerfumeInput("test_id","test_category_id");
+        perfumeMock.getCategoryIds().add("test_category_id");
+        CategoryPayload categoryPayload = new CategoryPayload("test_category_id","test_name", GenderEnums.UNISEX);
+
+        when(perfumeRepositoryMock.findById(addCategoryToPerfumeInput.getId())).thenReturn(Optional.ofNullable(perfumeMock));
+        when(categoryService.getCategoryById(addCategoryToPerfumeInput.getCategoryId())).thenReturn(categoryPayload);
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.addCategoryToPerfume(addCategoryToPerfumeInput));
     }
 
     @AfterEach
