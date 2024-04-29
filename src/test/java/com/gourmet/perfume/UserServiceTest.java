@@ -1,5 +1,6 @@
 package com.gourmet.perfume;
 
+import com.gourmet.perfume.dto.input.user.GetAllUsersInput;
 import com.gourmet.perfume.entity.User;
 import com.gourmet.perfume.enums.GenderEnums;
 import com.gourmet.perfume.exception.CustomException;
@@ -13,7 +14,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -80,7 +85,18 @@ class UserServiceTest {
 
         assertThrows(CustomException.class, () -> userServiceMock.getUserByUsername(username));
     }
+  
+    @DisplayName("getAllUsers should return page user with given getAllUsersInput")
+    @Test
+    void testGetAllUsers_success(){
+        GetAllUsersInput getAllUsersInput = new GetAllUsersInput(1,1,"username", Sort.Direction.ASC);
+        Pageable pageable = getAllUsersInput.toPageable();
+        PageImpl<User> userPage = new PageImpl<>(Arrays.asList(userMock));
 
+        when(userRepositoryMock.findAll(pageable)).thenReturn(userPage);
+
+        assertEquals(1, userServiceMock.getAllUsers(getAllUsersInput).getSize());
+    }
     @AfterEach
     void tearDown() {
 
