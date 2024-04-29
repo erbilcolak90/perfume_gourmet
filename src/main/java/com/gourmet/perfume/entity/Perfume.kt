@@ -17,4 +17,7 @@ data class Perfume @JvmOverloads constructor(
         var content: String?,
         var description: String?,
         var thumbnailIds: List<String>?
-): BaseEntity()
+): BaseEntity(){
+
+        constructor() : this(null, "", "", 0, null, TypeEnums.EAU_DE_PERFUME, null, null, null)
+}
