@@ -22,7 +22,12 @@ public class UserService {
         return UserPayload.convert(userRepository.findById(id).orElseThrow(()->CustomException.userNotFound(id)));
     }
 
-    public Page<User> getAllUsers(GetAllUsersInput getAllUsersInput){
+    public UserPayload getUserByUsername(String username){
+        return UserPayload.convert(userRepository.findByUsername(username.toLowerCase()).orElseThrow(()->CustomException.usernameNotFound(username)));
+
+    }
+  
+      public Page<User> getAllUsers(GetAllUsersInput getAllUsersInput){
         Pageable pageable = getAllUsersInput.toPageable();
 
         return userRepository.findAll(pageable);
