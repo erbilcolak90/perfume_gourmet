@@ -345,6 +345,40 @@ class PerfumeServiceTest {
         assertThrows(CustomException.class, ()-> perfumeServiceMock.addCategoryToPerfume(addCategoryToPerfumeInput));
     }
 
+    @DisplayName("removeCategoryFromPerfume should return perfumePayload when given id is exist and exist perfume has not category id given category id from removeCategoryFromPerfumeInput")
+    @Test
+    void testRemoveCategoryFromPerfume_success(){
+        RemoveCategoryFromPerfumeInput removeCategoryFromPerfumeInput = new RemoveCategoryFromPerfumeInput("test_id","test_category_id");
+        CategoryPayload categoryPayload = new CategoryPayload("test_category_id","test_name", GenderEnums.UNISEX);
+        perfumeMock.getCategoryIds().add(categoryPayload.getId());
+        when(perfumeRepositoryMock.findById(removeCategoryFromPerfumeInput.getId())).thenReturn(Optional.ofNullable(perfumeMock));
+        when(categoryService.getCategoryById(removeCategoryFromPerfumeInput.getCategoryId())).thenReturn(categoryPayload);
+
+        assertEquals(0,perfumeServiceMock.removeCategoryFromPerfume(removeCategoryFromPerfumeInput).getCategoryIds().size());
+    }
+
+    @DisplayName("removeCategoryFromPerfume should throw custom exception perfumeNotFound when given id does not exist from removeCategoryFromPerfumeInput")
+    @Test
+    void testRemoveCategoryFromPerfume_perfumeNotFound(){
+        RemoveCategoryFromPerfumeInput removeCategoryFromPerfumeInput = new RemoveCategoryFromPerfumeInput("test_id","test_category_id");
+
+        when(perfumeRepositoryMock.findById(removeCategoryFromPerfumeInput.getId())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.removeCategoryFromPerfume(removeCategoryFromPerfumeInput));
+    }
+
+    @DisplayName("removeCategoryFromPerfume should throw custom exception perfumeCategoryListNotContainsInputCategory when given id does not exist from removeCategoryFromPerfumeInput")
+    @Test
+    void testAddCategoryToPerfume_perfumeCategoryListNotContainsInputCategory(){
+        RemoveCategoryFromPerfumeInput removeCategoryFromPerfumeInput = new RemoveCategoryFromPerfumeInput("test_id","test_category_id");
+        CategoryPayload categoryPayload = new CategoryPayload("test_category_id","test_name", GenderEnums.UNISEX);
+
+        when(perfumeRepositoryMock.findById(removeCategoryFromPerfumeInput.getId())).thenReturn(Optional.ofNullable(perfumeMock));
+        when(categoryService.getCategoryById(removeCategoryFromPerfumeInput.getCategoryId())).thenReturn(categoryPayload);
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.removeCategoryFromPerfume(removeCategoryFromPerfumeInput));
+    }
+
     @AfterEach
     void tearDown() {
 

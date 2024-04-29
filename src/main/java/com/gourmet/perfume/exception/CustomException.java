@@ -51,4 +51,8 @@ public class CustomException extends RuntimeException {
     public static CustomException perfumeAlreadyExistOnCategory(String categoryId) {
         return new CustomException("Perfume has already exist on category id : " + categoryId);
     }
+
+    public static CustomException perfumeCategoryListNotContainsInputCategory(String id) {
+        return new CustomException("Perfume category list not contains this category id : " + id);
+    }
 }
