@@ -185,4 +185,21 @@ public class PerfumeService {
             throw CustomException.perfumeAlreadyExistOnCategory(addCategoryToPerfumeInput.getCategoryId());
         }
     }
+
+    @Transactional
+    public PerfumePayload removeCategoryFromPerfume(RemoveCategoryFromPerfumeInput removeCategoryFromPerfumeInput){
+        Perfume dbPerfume = perfumeRepository.findById(removeCategoryFromPerfumeInput.getId()).orElseThrow(()-> CustomException.perfumeNotFound(removeCategoryFromPerfumeInput.getId()));
+        CategoryPayload dbCategory = categoryService.getCategoryById(removeCategoryFromPerfumeInput.getCategoryId());
+
+        if(dbPerfume.getCategoryIds().contains(dbCategory.getId())){
+            dbPerfume.getCategoryIds().remove(dbCategory.getId());
+            dbPerfume.setUpdateDate(LocalDateTime.now());
+
+            perfumeRepository.save(dbPerfume);
+
+            return PerfumePayload.convert(dbPerfume);
+        }else{
+            throw CustomException.perfumeCategoryListNotContainsInputCategory(dbCategory.getId());
+        }
+    }
 }
