@@ -1,7 +1,9 @@
 package com.gourmet.perfume.service;
 
 import com.gourmet.perfume.dto.input.perfume.*;
+import com.gourmet.perfume.dto.payload.category.CategoryPayload;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
+import com.gourmet.perfume.entity.Category;
 import com.gourmet.perfume.entity.Perfume;
 import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.mongodb.PerfumeRepository;
@@ -17,9 +19,11 @@ import java.util.List;
 public class PerfumeService {
 
     private final PerfumeRepository perfumeRepository;
+    private final CategoryService categoryService;
 
-    public PerfumeService(PerfumeRepository perfumeRepository) {
+    public PerfumeService(PerfumeRepository perfumeRepository, CategoryService categoryService) {
         this.perfumeRepository = perfumeRepository;
+        this.categoryService = categoryService;
     }
 
     public PerfumePayload getPerfumeById(String id) {
@@ -162,5 +166,23 @@ public class PerfumeService {
 
         return PerfumePayload.convert(dbPerfume);
 
+    }
+
+    @Transactional
+    public PerfumePayload addCategoryToPerfume(AddCategoryToPerfumeInput addCategoryToPerfumeInput){
+        Perfume dbPerfume = perfumeRepository.findById(addCategoryToPerfumeInput.getId()).orElseThrow(()-> CustomException.perfumeNotFound(addCategoryToPerfumeInput.getId()));
+        CategoryPayload dbCategory = categoryService.getCategoryById(addCategoryToPerfumeInput.getCategoryId());
+
+        if(!dbPerfume.getCategoryIds().contains(dbCategory.getId())){
+
+            dbPerfume.getCategoryIds().add(dbCategory.getId());
+            dbPerfume.setUpdateDate(LocalDateTime.now());
+
+            perfumeRepository.save(dbPerfume);
+
+            return PerfumePayload.convert(dbPerfume);
+        }else{
+            throw CustomException.perfumeAlreadyExistOnCategory(addCategoryToPerfumeInput.getCategoryId());
+        }
     }
 }
