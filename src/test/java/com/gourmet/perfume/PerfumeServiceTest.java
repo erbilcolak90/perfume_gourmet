@@ -184,6 +184,37 @@ class PerfumeServiceTest {
         assertThrows(CustomException.class, () -> perfumeServiceMock.addPerfume(addPerfumeInput));
     }
 
+    @DisplayName("updatePerfumeName should return perfumePayload when given id is exist given name does not exist ")
+    @Test
+    void testUpdatePerfumeName_success() {
+        String test_id= "test_id";
+        String newName = "test_new_name";
+        when(perfumeRepositoryMock.findById(test_id)).thenReturn(Optional.ofNullable(perfumeMock));
+        when(perfumeRepositoryMock.findByName(newName)).thenReturn(Optional.empty());
+        when(perfumeRepositoryMock.save(any(Perfume.class))).thenReturn(perfumeMock);
+
+        assertEquals(newName, perfumeServiceMock.updatePerfumeName(test_id,newName).getName());
+    }
+
+    @DisplayName("updatePerfumeName should throw custom exception perfumeNotFound when given id does not exist ")
+    @Test
+    void testUpdatePerfumeName_perfumeNotFound() {
+
+        when(perfumeRepositoryMock.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.updatePerfumeName("",""));
+    }
+
+    @DisplayName("updatePerfumeName should throw custom exception perfumeNameIsAlreadyExist when given id is exist and name is exist ")
+    @Test
+    void testUpdatePerfumeName_perfumeNameIsAlreadyExist() {
+
+        when(perfumeRepositoryMock.findById(anyString())).thenReturn(Optional.ofNullable(perfumeMock));
+        when(perfumeRepositoryMock.findByName(anyString())).thenReturn(Optional.ofNullable(perfumeMock));
+
+        assertThrows(CustomException.class, ()-> perfumeServiceMock.updatePerfumeName("",""));
+    }
+
     @AfterEach
     void tearDown() {
 

@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,6 +95,24 @@ public class PerfumeService {
             return PerfumePayload.convert(dbPerfume);
         } else {
             throw CustomException.perfumeNameIsAlreadyExist(dbPerfume.getName());
+        }
+    }
+
+    @Transactional
+    public PerfumePayload updatePerfumeName(String id, String newName){
+        Perfume dbPerfume = perfumeRepository.findById(id).orElseThrow(()-> CustomException.perfumeNotFound(id));
+
+        Perfume isExistName = perfumeRepository.findByName(newName.toLowerCase()).orElse(null);
+
+        if(isExistName == null){
+            dbPerfume.setName(newName.toLowerCase());
+            dbPerfume.setUpdateDate(LocalDateTime.now());
+
+            perfumeRepository.save(dbPerfume);
+
+            return PerfumePayload.convert(dbPerfume);
+        }else{
+            throw CustomException.perfumeNameIsAlreadyExist(newName);
         }
     }
 }
