@@ -59,4 +59,8 @@ public class CustomException extends RuntimeException {
     public static CustomException userNotFound(String id) {
         return new CustomException("User with given id : " + id + " not found");
     }
+
+    public static CustomException usernameNotFound(String username) {
+        return new CustomException("Given username : " + username + " not found");
+    }
 }

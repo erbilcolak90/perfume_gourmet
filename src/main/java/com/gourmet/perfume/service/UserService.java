@@ -18,4 +18,8 @@ public class UserService {
     public UserPayload getUserById(String id){
         return UserPayload.convert(userRepository.findById(id).orElseThrow(()->CustomException.userNotFound(id)));
     }
+
+    public UserPayload getUserByUsername(String username){
+        return UserPayload.convert(userRepository.findByUsername(username.toLowerCase()).orElseThrow(()->CustomException.usernameNotFound(username)));
+    }
 }
