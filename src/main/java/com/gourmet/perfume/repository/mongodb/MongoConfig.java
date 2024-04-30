@@ -15,10 +15,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @PropertySource("classpath:secret.properties")
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
-    @Value("${secret.properties.database}")
+    @Value("${secret.properties.mongodb.database}")
     private String databaseName;
 
-    @Value("${secret.properties.uri}")
+    @Value("${secret.properties.mongodb.uri}")
     private String mongoUri;
 
     @Override
