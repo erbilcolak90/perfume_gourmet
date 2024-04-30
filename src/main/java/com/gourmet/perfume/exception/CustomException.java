@@ -63,4 +63,8 @@ public class CustomException extends RuntimeException {
     public static CustomException usernameNotFound(String username) {
         return new CustomException("Given username : " + username + " not found");
     }
+
+    public static CustomException usernameIsAlreadyExist(String username) {
+        return new CustomException("Username :" + username + " is already exist");
+    }
 }
