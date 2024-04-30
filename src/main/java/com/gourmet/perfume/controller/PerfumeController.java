@@ -34,12 +34,12 @@ public class PerfumeController {
         return ResponseEntity.ok(perfumeService.getPerfumesByBrandName(name));
     }
 
-    @GetMapping("/getPerfumeById")
+    @GetMapping("/getPerfumesByYearRange")
     public ResponseEntity<List<PerfumePayload>> getPerfumesByYearRange(@RequestBody GetPerfumesByYearRangeInput getPerfumesByYearRangeInput) {
         return ResponseEntity.ok(perfumeService.getPerfumesByYearRange(getPerfumesByYearRangeInput));
     }
 
-    @GetMapping("/getPerfumeById")
+    @GetMapping("/getAllPerfumes")
     public ResponseEntity<Page<PerfumePayload>> getAllPerfumes(@RequestBody GetAllPerfumesInput getAllPerfumesInput) {
         return ResponseEntity.ok(perfumeService.getAllPerfumes(getAllPerfumesInput));
     }
@@ -83,6 +83,4 @@ public class PerfumeController {
     public ResponseEntity<PerfumePayload> removeCategoryFromPerfume(@RequestBody RemoveCategoryFromPerfumeInput removeCategoryFromPerfumeInput) {
         return ResponseEntity.ok(perfumeService.removeCategoryFromPerfume(removeCategoryFromPerfumeInput));
     }
-
-
 }
