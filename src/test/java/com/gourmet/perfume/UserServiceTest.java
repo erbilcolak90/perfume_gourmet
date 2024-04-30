@@ -1,5 +1,6 @@
 package com.gourmet.perfume;
 
+import com.gourmet.perfume.dto.input.user.CreateUserInput;
 import com.gourmet.perfume.dto.input.user.GetAllUsersInput;
 import com.gourmet.perfume.entity.User;
 import com.gourmet.perfume.enums.GenderEnums;
@@ -97,6 +98,27 @@ class UserServiceTest {
 
         assertEquals(1, userServiceMock.getAllUsers(getAllUsersInput).getSize());
     }
+
+    @DisplayName("createUser should return userPayload when given username is does not exist on db from createUserInput")
+    @Test
+    void testCreateUser_success(){
+        CreateUserInput createUserInput = new CreateUserInput("test_username","test_password",GenderEnums.UNISEX);
+
+        when(userRepositoryMock.findByUsername(createUserInput.getUsername().toLowerCase())).thenReturn(Optional.empty());
+
+        assertEquals(createUserInput.getUsername().toLowerCase(),userServiceMock.createUser(createUserInput).getUsername());
+    }
+
+    @DisplayName("createUser should throw custom exception usernameIsAlreadyExist when given username is exist on db from createUserInput")
+    @Test
+    void testCreateUser_usernameIsAlreadyExist(){
+        CreateUserInput createUserInput = new CreateUserInput("test_username","test_password",GenderEnums.UNISEX);
+
+        when(userRepositoryMock.findByUsername(createUserInput.getUsername().toLowerCase())).thenReturn(Optional.ofNullable(userMock));
+
+        assertThrows(CustomException.class, ()-> userServiceMock.createUser(createUserInput));
+    }
+
     @AfterEach
     void tearDown() {
 

@@ -1,5 +1,6 @@
 package com.gourmet.perfume.service;
 
+import com.gourmet.perfume.dto.input.user.CreateUserInput;
 import com.gourmet.perfume.dto.input.user.GetAllUsersInput;
 import com.gourmet.perfume.dto.payload.user.UserPayload;
 import com.gourmet.perfume.entity.User;
@@ -8,6 +9,7 @@ import com.gourmet.perfume.repository.mongodb.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -31,5 +33,18 @@ public class UserService {
         Pageable pageable = getAllUsersInput.toPageable();
 
         return userRepository.findAll(pageable);
+    }
+
+    @Transactional
+    public UserPayload createUser(CreateUserInput createUserInput){
+        User dbUser = userRepository.findByUsername(createUserInput.getUsername().toLowerCase()).orElse(null);
+
+        if(dbUser != null){
+            throw CustomException.usernameIsAlreadyExist(dbUser.getUsername());
+        }else{
+            dbUser = new User(null, createUserInput.getUsername().toLowerCase(),createUserInput.getPassword(),createUserInput.getGender(),null );
+
+            return UserPayload.convert(dbUser);
+        }
     }
 }
