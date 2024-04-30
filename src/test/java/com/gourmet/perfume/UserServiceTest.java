@@ -1,5 +1,6 @@
 package com.gourmet.perfume;
 
+import com.gourmet.perfume.dto.input.user.ChangeUsernameInput;
 import com.gourmet.perfume.dto.input.user.CreateUserInput;
 import com.gourmet.perfume.dto.input.user.GetAllUsersInput;
 import com.gourmet.perfume.entity.User;
@@ -117,6 +118,38 @@ class UserServiceTest {
         when(userRepositoryMock.findByUsername(createUserInput.getUsername().toLowerCase())).thenReturn(Optional.ofNullable(userMock));
 
         assertThrows(CustomException.class, ()-> userServiceMock.createUser(createUserInput));
+    }
+
+    @DisplayName("changeUsername should return userPayload when given user id is exist and given username does not exist on db from changeUsernameInput")
+    @Test
+    void testChangeUsername_success(){
+        ChangeUsernameInput changeUsernameInput = new ChangeUsernameInput("test_id","new_username");
+
+        when(userRepositoryMock.findById(changeUsernameInput.getUserId())).thenReturn(Optional.ofNullable(userMock));
+        when(userRepositoryMock.findByUsername(changeUsernameInput.getUsername().toLowerCase())).thenReturn(Optional.empty());
+
+        assertEquals(changeUsernameInput.getUsername(), userServiceMock.changeUsername(changeUsernameInput).getUsername());
+    }
+
+    @DisplayName("changeUsername should throw custom exception userNotFound when given user id does not found on db from changeUsernameInput")
+    @Test
+    void testChangeUsername_userNotFound(){
+        ChangeUsernameInput changeUsernameInput = new ChangeUsernameInput("test_id","new_username");
+
+        when(userRepositoryMock.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> userServiceMock.changeUsername(changeUsernameInput));
+    }
+
+    @DisplayName("changeUsername should throw custom exception usernameIsAlreadyExist when given user id and username is exist on db from changeUsernameInput")
+    @Test
+    void testChangeUsername_usernameIsAlreadyExist(){
+        ChangeUsernameInput changeUsernameInput = new ChangeUsernameInput("test_id","new_username");
+
+        when(userRepositoryMock.findById(changeUsernameInput.getUserId())).thenReturn(Optional.ofNullable(userMock));
+        when(userRepositoryMock.findByUsername(changeUsernameInput.getUsername().toLowerCase())).thenReturn(Optional.ofNullable(userMock));
+
+        assertThrows(CustomException.class, ()-> userServiceMock.changeUsername(changeUsernameInput));
     }
 
     @AfterEach

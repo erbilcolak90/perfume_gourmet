@@ -1,5 +1,6 @@
 package com.gourmet.perfume.service;
 
+import com.gourmet.perfume.dto.input.user.ChangeUsernameInput;
 import com.gourmet.perfume.dto.input.user.CreateUserInput;
 import com.gourmet.perfume.dto.input.user.GetAllUsersInput;
 import com.gourmet.perfume.dto.payload.user.UserPayload;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class UserService {
@@ -45,6 +48,24 @@ public class UserService {
             dbUser = new User(null, createUserInput.getUsername().toLowerCase(),createUserInput.getPassword(),createUserInput.getGender(),null );
 
             return UserPayload.convert(dbUser);
+        }
+    }
+
+    @Transactional
+    public UserPayload changeUsername(ChangeUsernameInput changeUsernameInput){
+
+        User dbUser = userRepository.findById(changeUsernameInput.getUserId().toLowerCase()).orElseThrow(()-> CustomException.userNotFound(changeUsernameInput.getUserId()));
+        User  existUsername= userRepository.findByUsername(changeUsernameInput.getUsername().toLowerCase()).orElse(null);
+
+        if(existUsername == null){
+            dbUser.setUsername(changeUsernameInput.getUsername().toLowerCase());
+            dbUser.setUpdateDate(LocalDateTime.now());
+
+            userRepository.save(dbUser);
+
+            return UserPayload.convert(dbUser);
+        }else{
+            throw CustomException.usernameIsAlreadyExist(changeUsernameInput.getUsername().toLowerCase());
         }
     }
 }
