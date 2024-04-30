@@ -152,6 +152,33 @@ class UserServiceTest {
         assertThrows(CustomException.class, ()-> userServiceMock.changeUsername(changeUsernameInput));
     }
 
+    @DisplayName("deleteUser should return true when given user id is exist and isDeleted false")
+    @Test
+    void testDeleteUser_success(){
+        String id = "test_id";
+
+        when(userRepositoryMock.findById(id)).thenReturn(Optional.ofNullable(userMock));
+
+        assertEquals("User id : " + id + " deleted", userServiceMock.deleteUser(id));
+    }
+
+    @DisplayName("deleteUser should throw custom exception userNotFound when given id does not exist")
+    @Test
+    void testDeleteUser_userNotFound(){
+        when(userRepositoryMock.findById("")).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> userServiceMock.deleteUser(""));
+    }
+
+    @DisplayName("deleteUser should throw custom exception userIsAlreadyDeleted when given id exist and exist user isDeleted already true")
+    @Test
+    void testDeleteUser_userIsAlreadyDeleted(){
+        userMock.setDeleted(true);
+        when(userRepositoryMock.findById("")).thenReturn(Optional.ofNullable(userMock));
+
+        assertThrows(CustomException.class, ()-> userServiceMock.deleteUser(""));
+    }
+
     @AfterEach
     void tearDown() {
 

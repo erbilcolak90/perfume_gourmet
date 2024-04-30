@@ -67,4 +67,8 @@ public class CustomException extends RuntimeException {
     public static CustomException usernameIsAlreadyExist(String username) {
         return new CustomException("Username :" + username + " is already exist");
     }
+
+    public static CustomException userIsAlreadyDeleted(String id) {
+        return new CustomException("User id : " + id+ " is already deleted" );
+    }
 }

@@ -68,4 +68,19 @@ public class UserService {
             throw CustomException.usernameIsAlreadyExist(changeUsernameInput.getUsername().toLowerCase());
         }
     }
+
+    @Transactional
+    public String deleteUser(String id){
+        User dbUser = userRepository.findById(id).orElseThrow(()-> CustomException.userNotFound(id));
+
+        if(dbUser.isDeleted()){
+            throw CustomException.userIsAlreadyDeleted(id);
+        }else {
+            dbUser.setDeleted(true);
+            dbUser.setUpdateDate(LocalDateTime.now());
+            userRepository.save(dbUser);
+
+            return "User id : " + id + " deleted";
+        }
+    }
 }
