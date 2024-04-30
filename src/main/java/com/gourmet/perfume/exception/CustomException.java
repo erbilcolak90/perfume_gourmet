@@ -71,4 +71,8 @@ public class CustomException extends RuntimeException {
     public static CustomException userIsAlreadyDeleted(String id) {
         return new CustomException("User id : " + id+ " is already deleted" );
     }
+
+    public static CustomException favoriteNotFound(String id) {
+        return new CustomException("Favorite id: " +id + " not found");
+    }
 }

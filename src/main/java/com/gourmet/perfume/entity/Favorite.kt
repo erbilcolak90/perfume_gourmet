@@ -14,4 +14,4 @@ data class Favorite(
         var userId: String,
         @Field(type = FieldType.Keyword)
         var perfumeId: String
-)
+): BaseEntity()
