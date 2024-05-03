@@ -1,8 +1,11 @@
 package com.gourmet.perfume;
 
+import com.gourmet.perfume.dto.input.favorite.AddPerfumeToFavoritesInput;
 import com.gourmet.perfume.dto.input.favorite.GetAllFavoritesByUserIdInput;
+import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.dto.payload.user.UserPayload;
 import com.gourmet.perfume.entity.Favorite;
+import com.gourmet.perfume.enums.TypeEnums;
 import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.elasticsearch.FavoriteRepository;
 import com.gourmet.perfume.service.FavoriteService;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -91,6 +95,18 @@ class FavoriteServiceTest {
         when(favoriteRepositoryMock.getTopFavorites()).thenReturn(Arrays.asList(favoriteMock));
 
         assertEquals(1,favoriteServiceMock.getTopFavorites().size());
+    }
+
+    @DisplayName("addPerfumeToFavorites should return favoritePayload when given userId and perfumeId is exist on db from AddFavoriteInput")
+    @Test
+    void testAddPerfumeToFavorites_success(){
+        AddPerfumeToFavoritesInput addPerfumeToFavoritesInput = new AddPerfumeToFavoritesInput("test_perfume_id","test_user_id");
+
+        when(userServiceMock.getUserById(addPerfumeToFavoritesInput.getUserId())).thenReturn(new UserPayload("test_user_id","test_username","test_avatar_id"));
+        when(perfumeServiceMock.getPerfumeById(addPerfumeToFavoritesInput.getPerfumeId())).thenReturn(new PerfumePayload("test_perfume_id","","",2022,new ArrayList<>(), TypeEnums.EAU_DE_PERFUME,"","",new ArrayList<>()));
+        when(favoriteRepositoryMock.save(any(Favorite.class))).thenReturn(favoriteMock);
+
+        assertNotNull(favoriteServiceMock.addPerfumeToFavorites(addPerfumeToFavoritesInput));
     }
 
     @AfterEach
