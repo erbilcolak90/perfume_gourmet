@@ -84,6 +84,15 @@ class FavoriteServiceTest {
 
     }
 
+    @DisplayName("getTopFavorites should return list favorite")
+    @Test
+    void testGetTopFavorites_success(){
+
+        when(favoriteRepositoryMock.getTopFavorites()).thenReturn(Arrays.asList(favoriteMock));
+
+        assertEquals(1,favoriteServiceMock.getTopFavorites().size());
+    }
+
     @AfterEach
     void tearDown(){
 
