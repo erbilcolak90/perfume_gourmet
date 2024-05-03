@@ -3,12 +3,13 @@ package com.gourmet.perfume.service;
 import com.gourmet.perfume.dto.input.favorite.GetAllFavoritesByUserIdInput;
 import com.gourmet.perfume.dto.payload.user.UserPayload;
 import com.gourmet.perfume.entity.Favorite;
-import com.gourmet.perfume.entity.User;
 import com.gourmet.perfume.exception.CustomException;
 import com.gourmet.perfume.repository.elasticsearch.FavoriteRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class FavoriteService {
@@ -34,5 +35,9 @@ public class FavoriteService {
         Pageable pageable = getAllFavoritesByUserIdInput.toPageable();
 
         return favoriteRepository.findAllByUserId(dbUser.getId(), pageable);
+    }
+
+    public List<Favorite> getTopFavorites(){
+        return favoriteRepository.getTopFavorites();
     }
 }
