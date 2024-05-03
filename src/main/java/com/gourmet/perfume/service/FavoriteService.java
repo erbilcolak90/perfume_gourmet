@@ -2,6 +2,7 @@ package com.gourmet.perfume.service;
 
 import com.gourmet.perfume.dto.input.favorite.AddPerfumeToFavoritesInput;
 import com.gourmet.perfume.dto.input.favorite.GetAllFavoritesByUserIdInput;
+import com.gourmet.perfume.dto.input.favorite.RemovePerfumeFromFavoritesInput;
 import com.gourmet.perfume.dto.payload.favorite.FavoritePayload;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.dto.payload.user.UserPayload;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -60,5 +62,16 @@ public class FavoriteService {
 
         return FavoritePayload.convert(favorite);
 
+    }
+
+    @Transactional
+    public boolean removePerfumeFromFavorites(RemovePerfumeFromFavoritesInput removePerfumeFromFavoritesInput){
+        Favorite dbFavorite = favoriteRepository.getFavoriteByUserIdAndPerfumeId(removePerfumeFromFavoritesInput.getUserId(), removePerfumeFromFavoritesInput.getPerfumeId()).orElseThrow(()-> CustomException.favoriteNotFound(""));
+
+        dbFavorite.setDeleted(true);
+        dbFavorite.setUpdateDate(LocalDateTime.now());
+
+        favoriteRepository.save(dbFavorite);
+        return true;
     }
 }

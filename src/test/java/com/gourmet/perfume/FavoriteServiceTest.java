@@ -2,6 +2,7 @@ package com.gourmet.perfume;
 
 import com.gourmet.perfume.dto.input.favorite.AddPerfumeToFavoritesInput;
 import com.gourmet.perfume.dto.input.favorite.GetAllFavoritesByUserIdInput;
+import com.gourmet.perfume.dto.input.favorite.RemovePerfumeFromFavoritesInput;
 import com.gourmet.perfume.dto.payload.perfume.PerfumePayload;
 import com.gourmet.perfume.dto.payload.user.UserPayload;
 import com.gourmet.perfume.entity.Favorite;
@@ -107,6 +108,26 @@ class FavoriteServiceTest {
         when(favoriteRepositoryMock.save(any(Favorite.class))).thenReturn(favoriteMock);
 
         assertNotNull(favoriteServiceMock.addPerfumeToFavorites(addPerfumeToFavoritesInput));
+    }
+
+    @DisplayName("removePerfumeFromFavorites should return true when given userId and perfumeId is exist on db from RemovePerfumeFromFavoritesInput")
+    @Test
+    void testRemovePerfumeFromFavorites_success(){
+        RemovePerfumeFromFavoritesInput removePerfumeFromFavoritesInput = new RemovePerfumeFromFavoritesInput("test_user_id","test_perfume_id");
+
+        when(favoriteRepositoryMock.getFavoriteByUserIdAndPerfumeId(removePerfumeFromFavoritesInput.getUserId(),removePerfumeFromFavoritesInput.getPerfumeId())).thenReturn(Optional.ofNullable(favoriteMock));
+
+        assertTrue(favoriteServiceMock.removePerfumeFromFavorites(removePerfumeFromFavoritesInput));
+    }
+
+    @DisplayName("removePerfumeFromFavorites should throw custom exception favoriteNotFound when given userId or perfumeId does not exist on db from RemovePerfumeFromFavoritesInput")
+    @Test
+    void testRemovePerfumeFromFavorites_favoriteNotFound(){
+        RemovePerfumeFromFavoritesInput removePerfumeFromFavoritesInput = new RemovePerfumeFromFavoritesInput("test_user_id","test_perfume_id");
+
+        when(favoriteRepositoryMock.getFavoriteByUserIdAndPerfumeId(removePerfumeFromFavoritesInput.getUserId(),removePerfumeFromFavoritesInput.getPerfumeId())).thenReturn(Optional.empty());
+
+        assertThrows(CustomException.class, ()-> favoriteServiceMock.removePerfumeFromFavorites(removePerfumeFromFavoritesInput));
     }
 
     @AfterEach
